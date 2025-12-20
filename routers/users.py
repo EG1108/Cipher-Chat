@@ -35,4 +35,4 @@ class UserVerification(BaseModel):
 async def get_user(user: user_dependency, db: db_dependency):
     if user is None:
         raise HTTPException(status_code=401, detail='Authentication Failed')
-    return db.query(Users).filter(Users.id == user.get('id')).first()
+    return db.query(Users).filter(Users.user_id == user.get('id')).first()
