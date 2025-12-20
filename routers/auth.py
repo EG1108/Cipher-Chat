@@ -6,7 +6,6 @@ from passlib.context import CryptContext
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
-from fastapi.templating import Jinja2Templates
 from starlette import status
 
 from database import SessionLocal
@@ -43,8 +42,6 @@ def get_db():
 
 
 db_dependency = Annotated[Session, Depends(get_db)]
-
-templates = Jinja2Templates(directory="TodoApp/templates")
 
 def authenticate_user(username: str, password: str, db):
     user = db.query(Users).filter(Users.username == username).first()
@@ -87,6 +84,7 @@ async def create_user(db: db_dependency,
 
     db.add(create_user_model)
     db.commit()
+    db.refresh(create_user_model)
 
 @router.post("/token", response_model=Token)
 async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
