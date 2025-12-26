@@ -32,4 +32,4 @@ class MessageListRequest(BaseModel):
 async def get_all_message_lists(user: user_dependency, db: db_dependency):
     if user is None:
         raise HTTPException(status_code=401, detail='Authentication Failed')
-    return db.query(MessageList).filter(MessageList.message_list_id == user.get('user_id')).all()
+    return db.query(MessageList).filter(MessageList.user_id == user.get('id')).all()
