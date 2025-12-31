@@ -44,9 +44,22 @@ async def get_message(user: user_dependency, db: db_dependency, message_id: int)
 
 @router.put("/message/{message_id}", status_code=HTTP_200_OK)
 async def edit_message(user: user_dependency, db: db_dependency, message_request: MessageRequest, message_id: int):
-    message_model = db.query = db.query(Messages).join(MessageList, Messages.message_list_id == MessageList.message_list_id) \
+    message_model = db.query(Messages).join(MessageList, Messages.message_list_id == MessageList.message_list_id) \
             .filter(Messages.message_id == message_id).filter(MessageList.user_id == user.get("id")).first()
     message_model.message_content = message_request.message_content
 
     db.add(message_model)
     db.commit()
+
+@router.post("/{message_list_id}/messages")
+async def add_message(user: user_dependency, db: db_dependency, message_request: MessageRequest, message_list_id: int):
+
+    create_message_model = Messages(
+        message_list_id = message_list_id,
+        message_content = message_request.message_content,
+        sender_id = user.get("id")
+    )
+
+    db.add(create_message_model)
+    db.commit()
+    db.refresh(create_message_model)
