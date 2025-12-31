@@ -36,3 +36,14 @@ async def get_user(user: user_dependency, db: db_dependency):
     if user is None:
         raise HTTPException(status_code=401, detail='Authentication Failed')
     return db.query(Users).filter(Users.user_id == user.get('id')).first()
+
+@router.put("/settings", status_code=status.HTTP_200_OK)
+async def update_display_name(user: user_dependency, db: db_dependency, new_display_name: str):
+    if user is None:
+        raise HTTPException(status_code=401, detail='Authentication Failed')
+
+    user_model = db.query(Users).filter(Users.user_id == user.get("id")).first()
+    user_model.display_name = new_display_name
+    db.add(user_model)
+    db.commit()
+    db.refresh(user_model)
