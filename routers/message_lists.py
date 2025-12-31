@@ -51,8 +51,17 @@ async def edit_message(user: user_dependency, db: db_dependency, message_request
     db.add(message_model)
     db.commit()
 
-@router.post("/{message_list_id}/messages")
-async def add_message(user: user_dependency, db: db_dependency, message_request: MessageRequest, message_list_id: int):
+@router.post("/", status_code=status.HTTP_201_CREATED)
+async def add_new_message_list(user: user_dependency, db: db_dependency):
+    create_message_list_model = MessageList(
+        user_id = user.get("id")
+    )
+    db.add(create_message_list_model)
+    db.commit()
+    db.refresh(create_message_list_model)
+
+@router.post("/{message_list_id}/messages", status_code=status.HTTP_201_CREATED)
+async def add_new_message(user: user_dependency, db: db_dependency, message_request: MessageRequest, message_list_id: int):
 
     create_message_model = Messages(
         message_list_id = message_list_id,
